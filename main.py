@@ -53,25 +53,31 @@ def run_epoch(ep, net, optim, data, train=True):
         loss_list.append(loss.item())
 
         if (i+1) % 10 == 0 or i == 0:
-            fig, axis = plt.subplots(2, 3)
+            fig, axis = plt.subplots(4, 2, figsize=(12, 9))
+            fig.tight_layout()
+            axis[0, 0].imshow(np.transpose(x.detach().cpu().numpy(), (2, 3, 1, 0))[:, :, :, 0])
+            axis[0, 0].set_title('Input')
 
-            axis[0, 0].imshow(h1.detach().cpu().numpy()[0, 0, :, :])
-            axis[0, 0].set_title('Stage 1')
+            axis[0, 1].imshow(y.detach().cpu().numpy()[0, 0, :, :])
+            axis[0, 1].set_title('Ground truth')
 
-            axis[0, 1].imshow(h2.detach().cpu().numpy()[0, 0, :, :])
-            axis[0, 1].set_title('Stage 2')
+            axis[1, 0].imshow(h1.detach().cpu().numpy()[0, 0, :, :])
+            axis[1, 0].set_title('Stage 1')
 
-            axis[0, 2].imshow(h3.detach().cpu().numpy()[0, 0, :, :])
-            axis[0, 2].set_title('Stage 3')
+            axis[1, 1].imshow(h2.detach().cpu().numpy()[0, 0, :, :])
+            axis[1, 1].set_title('Stage 2')
 
-            axis[1, 0].imshow(h4.detach().cpu().numpy()[0, 0, :, :])
-            axis[1, 0].set_title('Stage 4')
+            axis[2, 0].imshow(h3.detach().cpu().numpy()[0, 0, :, :])
+            axis[2, 0].set_title('Stage 3')
 
-            axis[1, 1].imshow(h5.detach().cpu().numpy()[0, 0, :, :])
-            axis[1, 1].set_title('Stage 5')
+            axis[2, 1].imshow(h4.detach().cpu().numpy()[0, 0, :, :])
+            axis[2, 1].set_title('Stage 4')
 
-            axis[1, 2].imshow(h6.detach().cpu().numpy()[0, 0, :, :])
-            axis[1, 2].set_title('Stage 6')
+            axis[3, 0].imshow(h5.detach().cpu().numpy()[0, 0, :, :])
+            axis[3, 0].set_title('Stage 5')
+
+            axis[3, 1].imshow(h6.detach().cpu().numpy()[0, 0, :, :])
+            axis[3, 1].set_title('Stage 6')
 
             plt.savefig(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{epoch + 1}/iter_{i + 1}_loss_{loss.item():0.4f}.png")
             plt.close(fig)
@@ -124,17 +130,24 @@ if __name__ == "__main__":
 
     for epoch in range(cfg.EPOCH):
 
-        run_epoch(ep=epoch,
-                  net=model,
-                  optim=optimizer,
-                  data=train_loader,
-                  train=True)
+        train_loss = run_epoch(ep=epoch, net=model,
+                               optim=optimizer,
+                               data=train_loader,
+                               train=True)
+
+        train_epoch_loss.append(train_loss)
 
         if epoch % cfg.VALID_EACH == 0:
-            run_epoch(ep=epoch,
-                      net=model,
-                      optim=optimizer,
-                      data=valid_loader,
-                      train=False)
+            valid_loss = run_epoch(ep=epoch, net=model, optim=optimizer, data=valid_loader, train=False)
+
+            valid_epoch_loss.append(valid_loss)
 
     torch.save(model.state_dict(), f"{cfg.OUTPUT_PATH}/cpm_net.pt")
+    plt.figure(figsize=(10, 7))
+    plt.plot(train_epoch_loss, color='orange', label='train loss')
+    plt.plot(valid_epoch_loss, color='red', label='validation loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.savefig(f"{cfg.OUTPUT_PATH}/loss.png")
+    plt.show()
