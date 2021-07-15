@@ -17,7 +17,7 @@ class Config():
 
         # Learning params
         self.NUM_WORKERS = 1
-        self.BATCH_SIZE = 16
+        self.BATCH_SIZE = 32
         self.LR = 0.0001
         self.EPOCH = 30
         self.VALID_EACH = 1

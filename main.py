@@ -35,7 +35,7 @@ def run_epoch(ep, net, optim, data, train=True):
     for i, sample in tqdm(enumerate(data), total=len(data)):
         image, heatmaps = sample['image'], sample['heatmaps']
         x = Variable(image).cuda() if train else image.to(cfg.DEVICE)
-        y = Variable(heatmaps).cuda() if train else image.to(cfg.DEVICE)
+        y = Variable(heatmaps).cuda() if train else y.to(cfg.DEVICE)
 
         h1, h2, h3, h4, h5, h6 = net(x)
         loss1 = criterion(h1, y) * hetmap_weight
