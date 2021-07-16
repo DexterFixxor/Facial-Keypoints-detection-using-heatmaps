@@ -29,19 +29,19 @@ def run_epoch(ep, net, optim, data, train=True):
     else:
         model.eval()
 
-    hetmap_weight = 1 #cfg.IMG_SIZE * cfg.IMG_SIZE * 68 / 1.0
+    heatmap_weight = cfg.HEATMAP_WEIGHT
     for i, sample in tqdm(enumerate(data), total=len(data)):
         image, heatmaps = sample['image'], sample['heatmaps']
         x = Variable(image).cuda() if train else image.to(cfg.DEVICE)
         y = Variable(heatmaps).cuda() if train else heatmaps.to(cfg.DEVICE)
 
         h1, h2, h3, h4, h5, h6 = net(x)
-        loss1 = criterion(h1, y) * hetmap_weight
-        loss2 = criterion(h2, y) * hetmap_weight
-        loss3 = criterion(h3, y) * hetmap_weight
-        loss4 = criterion(h4, y) * hetmap_weight
-        loss5 = criterion(h5, y) * hetmap_weight
-        loss6 = criterion(h6, y) * hetmap_weight
+        loss1 = criterion(h1, y) * heatmap_weight
+        loss2 = criterion(h2, y) * heatmap_weight
+        loss3 = criterion(h3, y) * heatmap_weight
+        loss4 = criterion(h4, y) * heatmap_weight
+        loss5 = criterion(h5, y) * heatmap_weight
+        loss6 = criterion(h6, y) * heatmap_weight
 
         loss = loss1 + loss2 + loss3 + loss4 + loss5 + loss6
         optim.zero_grad()
@@ -77,10 +77,10 @@ def run_epoch(ep, net, optim, data, train=True):
             axis[3, 1].imshow(h6.detach().cpu().numpy()[0, 0, :, :])
             axis[3, 1].set_title('Stage 6')
 
-            plt.savefig(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{epoch + 1}/iter_{i + 1}_loss_{loss.item():0.4f}.png")
+            plt.savefig(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{ep + 1}/iter_{i + 1}_loss_{loss.item():0.4f}.png")
             plt.close(fig)
 
-    print("Epoch time: {:.4f} seconds\t Error: {:.7f}".format(time.time() - start, np.mean(loss_list)))
+    print("Error: {:.8f}".format(time.time() - start, np.mean(loss_list)))
 
     mean_epoch_loss = np.mean(loss_list)
     return mean_epoch_loss
@@ -143,6 +143,7 @@ if __name__ == "__main__":
 
             if np.mean(valid_epoch_loss) < min_val_loss:
                 torch.save(model.state_dict(), f"{cfg.OUTPUT_PATH}/cpm_net_ep{epoch+1}.pt")
+                min_val_loss = np.mean(valid_epoch_loss)
 
     torch.save(model.state_dict(), f"{cfg.OUTPUT_PATH}/cpm_net.pt")
 
