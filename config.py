@@ -28,7 +28,7 @@ class Config():
         self.MAX_IMG_W = 256
         self.MAX_IMG_H = 256
         self.HEATMAP_STRIDE = 4  # possible choices: 2, 4
-        self.HEATMAP_WEIGHT = cfg.IMG_SIZE * cfg.IMG_SIZE * 68 / 1.0
+        self.HEATMAP_WEIGHT = (self.IMG_SIZE * self.IMG_SIZE * 68 / 1.0) / (self.HEATMAP_STRIDE ** 2)
 
         self.USE_RootMSE = True # if False, MSE is used
 

@@ -39,7 +39,7 @@ class CPM(nn.Module):
         if cfg.HEATMAP_STRIDE == 2:
             self.stage2_pool2 = nn.MaxPool2d(kernel_size=3, padding=1, stride=1)
         else:
-            self.stage1_pool2 = nn.MaxPool2d(kernel_size=2, padding=0, stride=2)
+            self.stage2_pool2 = nn.MaxPool2d(kernel_size=2, padding=0, stride=2)
         self.stage2_conv3 = nn.Conv2d(128, 128, (9, 9), (1, 1), (4, 4))
         self.stage2_pool3 = nn.MaxPool2d(kernel_size=3, padding=1, stride=1)
         self.stage2_conv4 = nn.Conv2d(128, 32, (5, 5), (1, 1), (2, 2))
