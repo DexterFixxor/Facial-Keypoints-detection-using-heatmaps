@@ -88,22 +88,23 @@ class Resize(object):
     def __call__(self, image, keypoints):
         h, w = image.shape[:2]
 
-        if h >= self.max_size or w >= self.max_size:
-            if isinstance(self.desired_size, int):
-                if h > w:
-                    new_h, new_w = self.desired_size * h / w, self.desired_size
-                else:
-                    new_h, new_w = self.desired_size, self.desired_size * w / h
+        #if h >= self.max_size or w >= self.max_size:
+        if isinstance(self.desired_size, int):
+            if h > w:
+                new_h, new_w = self.desired_size * h / w, self.desired_size
             else:
-                new_h, new_w = self.desired_size
+                new_h, new_w = self.desired_size, self.desired_size * w / h
+        else:
+            new_h, new_w = self.desired_size
 
-            new_h, new_w = int(new_h), int(new_w)
+        new_h, new_w = int(new_h), int(new_w)
+        img = cv2.resize(image, (new_w, new_h))
 
-            img = cv2.resize(image, (new_w, new_h))
-
-            # scale the pts, too
+        # scale the pts, too
+        if keypoints is not None:
             key_pts = keypoints * [new_w / w, new_h / h]
 
             return img, key_pts
 
-        return image, keypoints
+        return img, None
+

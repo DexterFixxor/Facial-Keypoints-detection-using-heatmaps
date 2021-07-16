@@ -22,6 +22,7 @@ def run_epoch(ep, net, optim, data, train=True):
     utils.create_folder(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{epoch + 1}/")
 
     loss_list = []
+    print("")
     print("Training...") if train else print("Validating...")
     start = time.time()
     if train:
@@ -51,31 +52,41 @@ def run_epoch(ep, net, optim, data, train=True):
         loss_list.append(loss.item())
 
         if (i+1) % 10 == 0 or i == 0:
-            fig, axis = plt.subplots(4, 2, figsize=(12, 9))
+            fig, axis = plt.subplots(4, 3, figsize=(12, 9))
             fig.tight_layout()
+            index  = 0
             axis[0, 0].imshow(np.transpose(x.detach().cpu().numpy(), (2, 3, 1, 0))[:, :, :, 0])
             axis[0, 0].set_title('Input')
 
-            axis[0, 1].imshow(y.detach().cpu().numpy()[0, 0, :, :])
+            axis[0, 1].imshow(y.detach().cpu().numpy()[0, index, :, :])
             axis[0, 1].set_title('Ground truth')
 
-            axis[1, 0].imshow(h1.detach().cpu().numpy()[0, 0, :, :])
+            axis[1, 0].imshow(h1.detach().cpu().numpy()[0, index, :, :])
             axis[1, 0].set_title('Stage 1')
 
-            axis[1, 1].imshow(h2.detach().cpu().numpy()[0, 0, :, :])
+            axis[1, 1].imshow(h2.detach().cpu().numpy()[0, index, :, :])
             axis[1, 1].set_title('Stage 2')
 
-            axis[2, 0].imshow(h3.detach().cpu().numpy()[0, 0, :, :])
+            axis[2, 0].imshow(h3.detach().cpu().numpy()[0, index, :, :])
             axis[2, 0].set_title('Stage 3')
 
-            axis[2, 1].imshow(h4.detach().cpu().numpy()[0, 0, :, :])
+            axis[2, 1].imshow(h4.detach().cpu().numpy()[0, index, :, :])
             axis[2, 1].set_title('Stage 4')
 
-            axis[3, 0].imshow(h5.detach().cpu().numpy()[0, 0, :, :])
+            axis[3, 0].imshow(h5.detach().cpu().numpy()[0, index, :, :])
             axis[3, 0].set_title('Stage 5')
 
-            axis[3, 1].imshow(h6.detach().cpu().numpy()[0, 0, :, :])
+            axis[3, 1].imshow(h6.detach().cpu().numpy()[0, index, :, :])
             axis[3, 1].set_title('Stage 6')
+
+            axis[0, 2].imshow(h6.detach().cpu().numpy()[0, 10, :, :])
+            axis[0, 2].set_title('Key_pt 10')
+            axis[1, 2].imshow(h6.detach().cpu().numpy()[0, 20, :, :])
+            axis[1, 2].set_title('Key_pt 20')
+            axis[2, 2].imshow(h6.detach().cpu().numpy()[0, 30, :, :])
+            axis[2, 2].set_title('Key_pt 30')
+            axis[3, 2].imshow(h6.detach().cpu().numpy()[0, 40, :, :])
+            axis[3, 2].set_title('Key_pt 40')
 
             plt.savefig(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{ep + 1}/iter_{i + 1}_loss_{loss.item():0.4f}.png")
             plt.close(fig)

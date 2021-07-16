@@ -18,17 +18,18 @@ class Config():
         # Learning params
         self.NUM_WORKERS = 4
         self.BATCH_SIZE = 32
-        self.LR = 0.0001
-        self.EPOCH = 40
+        self.LR = 0.001
+        self.EPOCH = 60
         self.VALID_EACH = 1
         self.DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         self.TEST_SPLIT = 0.1
-        self.IMG_SIZE = 200     # must be divisonable with 8
-        self.MAX_IMG_W = 256
-        self.MAX_IMG_H = 256
+        self.IMG_SIZE = 240     # for rescaling
+        self.IMG_CROP = 200
+        self.MAX_IMG_W = 240    # used to calculate padding
+        self.MAX_IMG_H = 240    # if no padding is needed, set to same as IMG_SIZE
         self.HEATMAP_STRIDE = 4  # possible choices: 2, 4
-        self.HEATMAP_WEIGHT = (self.IMG_SIZE * self.IMG_SIZE * 68 / 1.0) / (self.HEATMAP_STRIDE ** 2)
+        self.HEATMAP_WEIGHT = (self.IMG_SIZE * self.IMG_SIZE  / 1.0) / (self.HEATMAP_STRIDE ** 2)
 
         self.USE_RootMSE = True # if False, MSE is used
 

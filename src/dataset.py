@@ -33,7 +33,7 @@ class FaceKeypointsDataset(Dataset):
         self.transform = torchvision.transforms.Compose([
             mytf.ImgPadding(max_w=self.max_w_padding, max_h=self.max_h_padding, stride=self.stride),
             # Pads to the border
-            mytf.RandomCrop(output_size=self.img_size, stride=self.stride),
+            mytf.RandomCrop(output_size=(cfg.IMG_CROP, cfg.IMG_CROP), stride=self.stride),
             mytf.ToTensor(),
         ])
 
@@ -71,8 +71,8 @@ class FaceKeypointsDataset(Dataset):
         #print(f"{index}: Image shape: {output['image'].shape} ::: Heatmaps shape: {output['heatmaps'].shape}")
         #print("----------------")
         #print("Time: {}".format(time.time() - start))
-        #lt.imshow(output['image'].detach().cpu().numpy().transpose(1,2,0))
-        #plt.imshow(cv2.resize(np.asarray(output['heatmaps'][0,:,:]), (cfg.IMG_SIZE, cfg.IMG_SIZE)), alpha=0.5)
+        #plt.imshow(output['image'].detach().cpu().numpy().transpose(1,2,0))
+        #plt.imshow(cv2.resize(np.asarray(output['heatmaps'][0,:,:]), (cfg.IMG_CROP, cfg.IMG_CROP)), alpha=0.5)
         #plt.show()
         return output
 
