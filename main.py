@@ -22,20 +22,18 @@ def run_epoch(ep, net, optim, data, train=True):
     utils.create_folder(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{epoch + 1}/")
 
     loss_list = []
-    print("-" * 50)
     print("Training...") if train else print("Validating...")
-    print(f"Epoch [{ep + 1}/{cfg.EPOCH}]")
     start = time.time()
     if train:
         model.train()
     else:
         model.eval()
 
-    hetmap_weight = cfg.IMG_SIZE * cfg.IMG_SIZE * 68 / 1.0
+    hetmap_weight = 1 #cfg.IMG_SIZE * cfg.IMG_SIZE * 68 / 1.0
     for i, sample in tqdm(enumerate(data), total=len(data)):
         image, heatmaps = sample['image'], sample['heatmaps']
         x = Variable(image).cuda() if train else image.to(cfg.DEVICE)
-        y = Variable(heatmaps).cuda() if train else y.to(cfg.DEVICE)
+        y = Variable(heatmaps).cuda() if train else heatmaps.to(cfg.DEVICE)
 
         h1, h2, h3, h4, h5, h6 = net(x)
         loss1 = criterion(h1, y) * hetmap_weight
@@ -82,7 +80,7 @@ def run_epoch(ep, net, optim, data, train=True):
             plt.savefig(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{epoch + 1}/iter_{i + 1}_loss_{loss.item():0.4f}.png")
             plt.close(fig)
 
-    print("Epoch time: {:.4f} seconds\t Error: {:.4f}".format(time.time() - start, np.mean(loss_list)))
+    print("Epoch time: {:.4f} seconds\t Error: {:.7f}".format(time.time() - start, np.mean(loss_list)))
 
     mean_epoch_loss = np.mean(loss_list)
     return mean_epoch_loss
@@ -129,7 +127,8 @@ if __name__ == "__main__":
     valid_epoch_loss = []
 
     for epoch in range(cfg.EPOCH):
-
+        print("-" * 50)
+        print(f"Epoch [{epoch + 1}/{cfg.EPOCH}]")
         train_loss = run_epoch(ep=epoch, net=model,
                                optim=optimizer,
                                data=train_loader,
@@ -142,7 +141,11 @@ if __name__ == "__main__":
 
             valid_epoch_loss.append(valid_loss)
 
+            if np.mean(valid_epoch_loss) < min_val_loss:
+                torch.save(model.state_dict(), f"{cfg.OUTPUT_PATH}/cpm_net_ep{epoch+1}.pt")
+
     torch.save(model.state_dict(), f"{cfg.OUTPUT_PATH}/cpm_net.pt")
+
     plt.figure(figsize=(10, 7))
     plt.plot(train_epoch_loss, color='orange', label='train loss')
     plt.plot(valid_epoch_loss, color='red', label='validation loss')
