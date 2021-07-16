@@ -17,8 +17,8 @@ class Config():
 
         # Learning params
         self.NUM_WORKERS = 4
-        self.BATCH_SIZE = 32
-        self.LR = 0.001
+        self.BATCH_SIZE = 16
+        self.LR = 0.0001
         self.EPOCH = 60
         self.VALID_EACH = 1
         self.DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
