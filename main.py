@@ -16,7 +16,7 @@ from config import cfg
 import time
 import matplotlib.pyplot as plt
 
-
+print('Testing branches')
 def run_epoch(ep, net, optim, data, train=True):
     mode = 'train' if train else 'validation'
     utils.create_folder(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{epoch + 1}/")
@@ -106,7 +106,7 @@ if __name__ == "__main__":
                                          max_w_padding=cfg.MAX_IMG_W,
                                          img_size=cfg.IMG_SIZE,
                                          img_folder=f"{cfg.DATA_ROOT_PATH}/training")
-    print('test branch')
+
     valid_dataset = FaceKeypointsDataset(csv_data=valid_samples,
                                          max_h_padding=cfg.MAX_IMG_H,
                                          max_w_padding=cfg.MAX_IMG_W,
