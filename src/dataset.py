@@ -91,14 +91,26 @@ if __name__ == "__main__":
                                          img_size=(cfg.IMG_SIZE, cfg.IMG_SIZE),
                                          img_folder=f"{cfg.DATA_ROOT_PATH}/training")
 
+    valid_dataset = FaceKeypointsDataset(csv_data=valid_samples,
+                                         max_h_padding=cfg.MAX_IMG_H,
+                                         max_w_padding=cfg.MAX_IMG_W,
+                                         img_size=(cfg.IMG_SIZE, cfg.IMG_SIZE),
+                                         img_folder=f"{cfg.DATA_ROOT_PATH}/training")
+
     train_loader = DataLoader(train_dataset, batch_size=cfg.BATCH_SIZE,
                               num_workers=cfg.NUM_WORKERS,
                               shuffle=True, drop_last=True)
 
+    valid_loader = DataLoader(valid_dataset, batch_size=cfg.BATCH_SIZE,
+                              num_workers=cfg.NUM_WORKERS,
+                              shuffle=False, drop_last=True)
+
     iterTrain = iter(train_dataset)
     start = time.time()
-    for i, sample in enumerate(train_loader):
-
+    for i, sample in enumerate(valid_loader):
+        print(sample['image'].shape)
+        print(sample['heatmaps'].shape)
+        print('-----')
         #sample = next(iterTrain)
         time.sleep(1)
         #print(time.time() - start)

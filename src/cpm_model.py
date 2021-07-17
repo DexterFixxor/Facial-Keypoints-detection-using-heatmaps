@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from config import cfg
 
+
 def conv_output(img_size, kernel, padding=1, stride=1):
     return (img_size - kernel + 2*padding)/stride +1
 
@@ -36,10 +37,10 @@ class CPM(nn.Module):
         self.stage2_conv1 = nn.Conv2d(in_channels=3, out_channels=128, kernel_size=(9, 9), padding=(4, 4))
         self.stage2_pool1 = nn.MaxPool2d(kernel_size=2, padding=0, stride=2)  # Reduces img resolution x2
         self.stage2_conv2 = nn.Conv2d(128, 128, (9, 9), (1, 1), (4, 4))
-        if cfg.HEATMAP_STRIDE == 2:
-            self.stage2_pool2 = nn.MaxPool2d(kernel_size=3, padding=1, stride=1)
-        else:
-            self.stage2_pool2 = nn.MaxPool2d(kernel_size=2, padding=0, stride=2)
+        #if cfg.HEATMAP_STRIDE == 2:
+        self.stage2_pool2 = nn.MaxPool2d(kernel_size=3, padding=1, stride=1)
+        #else:
+            #self.stage2_pool2 = nn.MaxPool2d(kernel_size=2, padding=0, stride=2)
         self.stage2_conv3 = nn.Conv2d(128, 128, (9, 9), (1, 1), (4, 4))
         self.stage2_pool3 = nn.MaxPool2d(kernel_size=3, padding=1, stride=1)
         self.stage2_conv4 = nn.Conv2d(128, 32, (5, 5), (1, 1), (2, 2))
