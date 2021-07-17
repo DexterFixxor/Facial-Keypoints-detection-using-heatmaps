@@ -16,9 +16,6 @@ from config import cfg
 import time
 import matplotlib.pyplot as plt
 
-print('Testing branches')
-print("added at laptop2 branch")
-
 def run_epoch(ep, net, optim, data, train=True):
     mode = 'train' if train else 'validation'
     utils.create_folder(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{epoch + 1}/")
