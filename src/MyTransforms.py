@@ -37,14 +37,16 @@ class ImgPadding(object):
         h, w, img_depth = img.shape
         hm_h, hm_w, hm_depth = hm.shape
 
-        top_offset = abs(self.max_h - h) // 2
-        left_offset = abs(self.max_w - w) // 2
-        image = np.zeros((self.max_h, self.max_w, img_depth), dtype='float32')
+        max_h = max(self.max_h, h)
+        max_w = max(self.max_w, w)
+        top_offset = abs(max_h - h) // 2
+        left_offset = abs(max_w - w) // 2
+        image = np.zeros((max_h, max_w, img_depth), dtype='float32')
         image[top_offset:top_offset + h, left_offset:left_offset + w] = img
 
-        top_offset = abs(self.max_h // self.stride - hm_h) // 2
-        left_offset = abs(self.max_w // self.stride - hm_w) // 2
-        heatmaps = np.zeros((self.max_h // self.stride, self.max_w//self.stride, hm_depth), dtype='float32')
+        top_offset = abs(max_h // self.stride - hm_h) // 2
+        left_offset = abs(max_w // self.stride - hm_w) // 2
+        heatmaps = np.zeros((max_h // self.stride, max_w//self.stride, hm_depth), dtype='float32')
         heatmaps[top_offset:top_offset + hm_h, left_offset:left_offset + hm_w] = hm
 
         return {'image': image, 'heatmaps': heatmaps}

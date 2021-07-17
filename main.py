@@ -104,13 +104,13 @@ if __name__ == "__main__":
     train_dataset = FaceKeypointsDataset(csv_data=train_samples,
                                          max_h_padding=cfg.MAX_IMG_H,
                                          max_w_padding=cfg.MAX_IMG_W,
-                                         img_size=(cfg.IMG_SIZE, cfg.IMG_SIZE),
+                                         img_size=cfg.IMG_SIZE,
                                          img_folder=f"{cfg.DATA_ROOT_PATH}/training")
 
     valid_dataset = FaceKeypointsDataset(csv_data=valid_samples,
                                          max_h_padding=cfg.MAX_IMG_H,
                                          max_w_padding=cfg.MAX_IMG_W,
-                                         img_size=(cfg.IMG_SIZE, cfg.IMG_SIZE),
+                                         img_size=cfg.IMG_SIZE,
                                          img_folder=f"{cfg.DATA_ROOT_PATH}/training")
 
     train_loader = DataLoader(train_dataset, batch_size=cfg.BATCH_SIZE,

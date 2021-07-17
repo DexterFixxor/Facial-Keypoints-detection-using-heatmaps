@@ -28,7 +28,7 @@ class Config():
         self.IMG_CROP = 200
         self.MAX_IMG_W = 240    # used to calculate padding
         self.MAX_IMG_H = 240    # if no padding is needed, set to same as IMG_SIZE
-        self.HEATMAP_STRIDE = 4  # possible choices: 2, 4
+        self.HEATMAP_STRIDE = 2  # possible choices: 2, 4
         self.HEATMAP_WEIGHT = (self.IMG_SIZE * self.IMG_SIZE  / 1.0) / (self.HEATMAP_STRIDE ** 2)
 
         self.USE_RootMSE = True # if False, MSE is used

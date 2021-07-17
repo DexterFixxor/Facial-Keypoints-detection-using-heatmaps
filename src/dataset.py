@@ -88,13 +88,13 @@ if __name__ == "__main__":
     train_dataset = FaceKeypointsDataset(csv_data=train_samples,
                                          max_h_padding=cfg.MAX_IMG_H,
                                          max_w_padding=cfg.MAX_IMG_W,
-                                         img_size=(cfg.IMG_SIZE, cfg.IMG_SIZE),
+                                         img_size=cfg.IMG_SIZE,
                                          img_folder=f"{cfg.DATA_ROOT_PATH}/training")
 
     valid_dataset = FaceKeypointsDataset(csv_data=valid_samples,
                                          max_h_padding=cfg.MAX_IMG_H,
                                          max_w_padding=cfg.MAX_IMG_W,
-                                         img_size=(cfg.IMG_SIZE, cfg.IMG_SIZE),
+                                         img_size=cfg.IMG_SIZE,
                                          img_folder=f"{cfg.DATA_ROOT_PATH}/training")
 
     train_loader = DataLoader(train_dataset, batch_size=cfg.BATCH_SIZE,
@@ -117,8 +117,9 @@ if __name__ == "__main__":
         start = time.time()
         pass
         # plt.figure('not padded')
-        # plt.imshow(sample['image'])
-        # plt.show()
+        plt.imshow(np.transpose(sample['image'][0], (1,2,0)))
+        plt.imshow(cv2.resize(np.asarray(sample['heatmaps'][0, 0, :, :]), (cfg.IMG_CROP, cfg.IMG_CROP)), alpha=0.5)
+        plt.show()
         # padTransform = mytf.ImgPadding(max_w=cfg.MAX_IMG_W, max_h=cfg.MAX_IMG_H)
         # cropTrans = mytf.RandomCrop(output_size=(cfg.IMG_SIZE, cfg.IMG_SIZE))
 
