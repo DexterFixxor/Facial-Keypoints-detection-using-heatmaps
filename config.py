@@ -24,10 +24,14 @@ class Config():
         self.DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         self.TEST_SPLIT = 0.1
-        self.IMG_SIZE = 240  # (240, 240)     # Rescale images to this size (tuple: fixed img size, int: keep ratio)
-        self.IMG_CROP = (200, 200)     # Crop resolution (type must be tuple)
-        self.MAX_IMG_SIZE = (240, 240)    # If type(IMG_SIZE) == int, images are zero padded around border to this size
-        self.HEATMAP_STRIDE = 2  # possible choices: 2, 4
+        # Rescale images to this size (tuple: fixed img size, int: keep ratio), should be less than MAX_IMG_SIZE
+        self.IMG_SIZE = 300  # (240, 240)
+        # Crop resolution (type must be tuple)
+        self.IMG_CROP = (300, 300)
+        # If type(IMG_SIZE) == int, images are zero padded around border to this size
+        self.MAX_IMG_SIZE = (400, 400)
+        # heatmap stride possible choices: 2, 4
+        self.HEATMAP_STRIDE = 4
         __img_size_1, __img_size_2 = (self.IMG_SIZE, self.IMG_SIZE) if isinstance(self.IMG_SIZE, int) else self.IMG_SIZE
         self.HEATMAP_WEIGHT = (__img_size_1 * __img_size_2 / 1.0) / (self.HEATMAP_STRIDE ** 2)
 

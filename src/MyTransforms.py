@@ -111,3 +111,23 @@ class Resize(object):
 
         return img, None
 
+
+class RandomFlip(object):
+
+    def __init__(self):
+        self.__flip_code = 1  # 1: horizontal flip
+
+    def __call__(self, img, kpts):
+
+        prob = np.random.randint(0, 100) % 2
+
+        img_h, img_w, _ = img.shape
+        if prob == 1:
+            image = cv2.flip(img, self.__flip_code)
+            if self.__flip_code == 1:
+                kpts[:, 0] = img_w - kpts[:, 0] - 1  # -1 is because index goes from 0
+
+            return image, kpts
+
+        return img, kpts
+

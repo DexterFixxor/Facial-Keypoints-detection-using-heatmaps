@@ -28,6 +28,7 @@ class FaceKeypointsDataset(Dataset):
         # 5 je previse, ne dolaze do izrazaja detalji sa lica, poklapaju se
         self.sigma = 1
 
+        self.random_flip = mytf.RandomFlip()
         self.resize = mytf.Resize(desired_img_size=self.img_size)
 
         self.transform = torchvision.transforms.Compose([
@@ -45,9 +46,8 @@ class FaceKeypointsDataset(Dataset):
         kpts = self.data.iloc[index][1:]
         kpts = np.array(kpts, dtype='float32').reshape(-1, 2)
 
-        #TODO: add random flip?
+        img, kpts = self.random_flip(img, kpts)
         image, keypoints = self.resize(img, kpts)
-        #h, w, c = image.shape
 
         # image.shape returns Rows x Columns x Channels                                               +1 for background
         heatmaps = np.zeros((image.shape[0] // self.stride, image.shape[1] // self.stride, keypoints.shape[0] + 1), dtype='float32')
@@ -70,7 +70,7 @@ class FaceKeypointsDataset(Dataset):
         #print("----------------")
         #print("Time: {}".format(time.time() - start))
         #plt.imshow(output['image'].detach().cpu().numpy().transpose(1,2,0))
-        #plt.imshow(cv2.resize(np.asarray(output['heatmaps'][0,:,:]), (cfg.IMG_CROP, cfg.IMG_CROP)), alpha=0.5)
+        #plt.imshow(cv2.resize(np.asarray(output['heatmaps'][0,:,:]), self.crop_size), alpha=0.5)
         #plt.show()
         return output
 
@@ -91,12 +91,12 @@ if __name__ == "__main__":
 
     train_loader = DataLoader(train_dataset, batch_size=cfg.BATCH_SIZE,
                               num_workers=cfg.NUM_WORKERS,
-                              shuffle=True, drop_last=True)
+                              shuffle=False, drop_last=True)
 
     iterTrain = iter(train_dataset)
     start = time.time()
-    for i, sample in enumerate(train_loader):
-
+    for i in range(len(train_dataset)):
+        next(iterTrain)
         #sample = next(iterTrain)
         time.sleep(1)
         #print(time.time() - start)
