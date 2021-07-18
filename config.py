@@ -24,12 +24,12 @@ class Config():
         self.DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         self.TEST_SPLIT = 0.1
-        self.IMG_SIZE = 240     # for rescaling
-        self.IMG_CROP = 200
-        self.MAX_IMG_W = 240    # used to calculate padding
-        self.MAX_IMG_H = 240    # if no padding is needed, set to same as IMG_SIZE
+        self.IMG_SIZE = (240, 240)     # Rescale images to this size (tuple: fixed img size, int: keep ratio)
+        self.IMG_CROP = (200, 200)     # Crop resolution (type must be tuple)
+        self.MAX_IMG_SIZE = (240, 240)    # If type(IMG_SIZE) == int, images are zero padded around border
         self.HEATMAP_STRIDE = 2  # possible choices: 2, 4
-        self.HEATMAP_WEIGHT = (self.IMG_SIZE * self.IMG_SIZE  / 1.0) / (self.HEATMAP_STRIDE ** 2)
+        __img_size_1, __img_size_2 = (self.IMG_SIZE, self.IMG_SIZE) if isinstance(self.IMG_SIZE, int) else self.IMG_SIZE
+        self.HEATMAP_WEIGHT = (__img_size_1 * __img_size_2 / 1.0) / (self.HEATMAP_STRIDE ** 2)
 
         self.USE_RootMSE = True # if False, MSE is used
 
