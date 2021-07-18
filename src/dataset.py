@@ -26,7 +26,7 @@ class FaceKeypointsDataset(Dataset):
 
         # 1 premalo, povecava vreme izvrsavanja znatno,
         # 5 je previse, ne dolaze do izrazaja detalji sa lica, poklapaju se
-        self.sigma = 1
+        self.sigma = cfg.SIGMA
 
         self.random_flip = mytf.RandomFlip()
         self.resize = mytf.Resize(desired_img_size=self.img_size)
@@ -46,7 +46,7 @@ class FaceKeypointsDataset(Dataset):
         kpts = self.data.iloc[index][1:]
         kpts = np.array(kpts, dtype='float32').reshape(-1, 2)
 
-        img, kpts = self.random_flip(img, kpts)
+        #img, kpts = self.random_flip(img, kpts)
         image, keypoints = self.resize(img, kpts)
 
         # image.shape returns Rows x Columns x Channels                                               +1 for background
@@ -66,12 +66,13 @@ class FaceKeypointsDataset(Dataset):
         output = self.transform(output)
         output['heatmaps'][0, :, :] = torch.from_numpy(1.0 - np.max(np.asarray(output['heatmaps'][1:, :, :]), axis=0))
 
-        #print(f"{index}: Image shape: {output['image'].shape} ::: Heatmaps shape: {output['heatmaps'].shape}")
-        #print("----------------")
-        #print("Time: {}".format(time.time() - start))
-        #plt.imshow(output['image'].detach().cpu().numpy().transpose(1,2,0))
-        #plt.imshow(cv2.resize(np.asarray(output['heatmaps'][0,:,:]), self.crop_size), alpha=0.5)
-        #plt.show()
+        # print(f"{index}: Image shape: {output['image'].shape} ::: Heatmaps shape: {output['heatmaps'].shape}")
+        # print("----------------")
+        # print("Time: {}".format(time.time() - start))
+        # plt.imshow(output['image'].detach().cpu().numpy().transpose(1,2,0), cmap='gray')
+        # plt.imshow(cv2.resize(np.asarray(output['heatmaps'][0,:,:]), self.crop_size), alpha=0.5)
+        # plt.imshow(np.asarray(output['heatmaps'][40, :, :]), alpha=0.5)
+        # plt.show()
         return output
 
     def __len__(self):

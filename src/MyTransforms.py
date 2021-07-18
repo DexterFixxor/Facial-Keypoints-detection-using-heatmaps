@@ -43,6 +43,8 @@ class ImgPadding(object):
         image = np.zeros((max_h, max_w, img_depth), dtype='float32')
         image[top_offset:top_offset + h, left_offset:left_offset + w] = img
 
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
         top_offset = abs(max_h // self.stride - hm_h) // 2
         left_offset = abs(max_w // self.stride - hm_w) // 2
         heatmaps = np.zeros((max_h // self.stride, max_w//self.stride, hm_depth), dtype='float32')

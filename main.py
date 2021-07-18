@@ -159,6 +159,7 @@ if __name__ == "__main__":
             valid_epoch_loss.append(valid_loss)
 
             if np.mean(valid_epoch_loss) < min_val_loss:
+                utils.create_folder(f"{cfg.OUTPUT_PATH}/models/cpm_net_ep{epoch+1}.pt")
                 torch.save(model.state_dict(), f"{cfg.OUTPUT_PATH}/models/cpm_net_ep{epoch+1}.pt")
                 min_val_loss = np.mean(valid_epoch_loss)
 

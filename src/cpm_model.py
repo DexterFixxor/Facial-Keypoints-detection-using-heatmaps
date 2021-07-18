@@ -18,7 +18,7 @@ class CPM(nn.Module):
         super(CPM, self).__init__()
         self.kp = n_keypoints
         """ STAGE 1 """
-        self.stage1_conv1 = nn.Conv2d(in_channels=3, out_channels=128, kernel_size=(9, 9), padding=(4, 4))
+        self.stage1_conv1 = nn.Conv2d(in_channels=1, out_channels=128, kernel_size=(9, 9), padding=(4, 4))
         self.stage1_pool1 = nn.MaxPool2d(kernel_size=2, padding=0, stride=2)  # Reduces img resolution x2
         self.stage1_conv2 = nn.Conv2d(128, 128, (9,9), (1,1), (4,4))
         if cfg.HEATMAP_STRIDE == 2:
@@ -34,7 +34,7 @@ class CPM(nn.Module):
         self.stage1_conv7 = nn.Conv2d(512, self.kp + 1, kernel_size=(1, 1))
 
         """ STAGE 2 a) --- feature extraction"""
-        self.stage2_conv1 = nn.Conv2d(in_channels=3, out_channels=128, kernel_size=(9, 9), padding=(4, 4))
+        self.stage2_conv1 = nn.Conv2d(in_channels=1, out_channels=128, kernel_size=(9, 9), padding=(4, 4))
         self.stage2_pool1 = nn.MaxPool2d(kernel_size=2, padding=0, stride=2)  # Reduces img resolution x2
         self.stage2_conv2 = nn.Conv2d(128, 128, (9, 9), (1, 1), (4, 4))
         if cfg.HEATMAP_STRIDE == 2:
