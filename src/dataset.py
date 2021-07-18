@@ -15,12 +15,11 @@ import src.MyTransforms as mytf
 
 class FaceKeypointsDataset(Dataset):
 
-    def __init__(self, csv_data, img_folder, img_size: tuple, max_h_padding, max_w_padding):
+    def __init__(self, csv_data, img_folder, img_size: tuple, padding_size):
         self.data = csv_data
         self.img_folder = img_folder
         self.img_size = img_size
-        self.max_w_padding = max_w_padding
-        self.max_h_padding = max_h_padding
+        self.padding_size = padding_size
 
         self.stride = cfg.HEATMAP_STRIDE  # 2 = upola smanjuje rezoluciju slike
 
@@ -28,12 +27,12 @@ class FaceKeypointsDataset(Dataset):
         # 5 je previse, ne dolaze do izrazaja detalji sa lica, poklapaju se
         self.sigma = 1
 
-        self.resize = mytf.Resize(max_img_size=self.max_w_padding, desired_img_size=self.img_size)
+        self.resize = mytf.Resize(desired_img_size=self.img_size)
 
         self.transform = torchvision.transforms.Compose([
-            mytf.ImgPadding(max_w=self.max_w_padding, max_h=self.max_h_padding, stride=self.stride),
+            mytf.ImgPadding(padding_size=self.padding_size, stride=self.stride),
             # Pads to the border
-            mytf.RandomCrop(output_size=(cfg.IMG_CROP, cfg.IMG_CROP), stride=self.stride),
+            mytf.RandomCrop(output_size=cfg.IMG_CROP, stride=self.stride),
             mytf.ToTensor(),
         ])
 

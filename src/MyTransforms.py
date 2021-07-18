@@ -26,9 +26,8 @@ class ToTensor(object):
 
 class ImgPadding(object):
 
-    def __init__(self, max_w, max_h, stride):
-        self.max_w = max_w
-        self.max_h = max_h
+    def __init__(self, padding_size, stride):
+        self.max_h, self.max_w = padding_size[0], padding_size[1]
         self.stride = stride
 
     def __call__(self, sample):
@@ -63,8 +62,11 @@ class RandomCrop(object):
 
         h, w = image.shape[0], image.shape[1]
 
-        new_h = self.output_size[0]
-        new_w = self.output_size[1]
+        if isinstance(self.output_size, int):
+            new_h, new_w = self.output_size, self.output_size
+        else:
+            new_h = self.output_size[0]
+            new_w = self.output_size[1]
 
         top = np.random.randint(0, h - new_h)
         left = np.random.randint(0, w - new_w)
@@ -83,8 +85,7 @@ class RandomCrop(object):
 
 class Resize(object):
 
-    def __init__(self, max_img_size, desired_img_size):
-        self.max_size = max_img_size
+    def __init__(self, desired_img_size):
         self.desired_size = desired_img_size
 
     def __call__(self, image, keypoints):
