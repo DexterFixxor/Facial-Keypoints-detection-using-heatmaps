@@ -32,9 +32,9 @@ class Config():
         self.MAX_IMG_SIZE = (400, 400)
         # heatmap stride possible choices: 2, 4
         self.HEATMAP_STRIDE = 4
-        self.SIGMA = 2
+        self.SIGMA = 1
         __img_size_1, __img_size_2 = (self.IMG_SIZE, self.IMG_SIZE) if isinstance(self.IMG_SIZE, int) else self.IMG_SIZE
-        self.HEATMAP_WEIGHT = (__img_size_1 * __img_size_2 / 1.0) / (self.HEATMAP_STRIDE ** 2)
+        self.HEATMAP_WEIGHT = (__img_size_1 * __img_size_2 * 68/ 1.0) / (self.HEATMAP_STRIDE ** 2)
 
 
 cfg = Config()
