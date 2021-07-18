@@ -16,6 +16,7 @@ from config import cfg
 import time
 import matplotlib.pyplot as plt
 
+
 def run_epoch(ep, net, optim, data, train=True):
     mode = 'train' if train else 'validation'
     utils.create_folder(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{epoch + 1}/")
@@ -101,16 +102,16 @@ if __name__ == "__main__":
                                                     portion=cfg.TEST_SPLIT)
 
     train_dataset = FaceKeypointsDataset(csv_data=train_samples,
-                                         max_h_padding=cfg.MAX_IMG_H,
-                                         max_w_padding=cfg.MAX_IMG_W,
+                                         img_folder=f"{cfg.DATA_ROOT_PATH}/training",
                                          img_size=cfg.IMG_SIZE,
-                                         img_folder=f"{cfg.DATA_ROOT_PATH}/training")
+                                         padding_size=cfg.MAX_IMG_SIZE,
+                                         crop_size=cfg.IMG_CROP)
 
     valid_dataset = FaceKeypointsDataset(csv_data=valid_samples,
-                                         max_h_padding=cfg.MAX_IMG_H,
-                                         max_w_padding=cfg.MAX_IMG_W,
+                                         img_folder=f"{cfg.DATA_ROOT_PATH}/training",
                                          img_size=cfg.IMG_SIZE,
-                                         img_folder=f"{cfg.DATA_ROOT_PATH}/training")
+                                         padding_size=cfg.MAX_IMG_SIZE,
+                                         crop_size=cfg.IMG_CROP)
 
     train_loader = DataLoader(train_dataset, batch_size=cfg.BATCH_SIZE,
                               num_workers=cfg.NUM_WORKERS,
