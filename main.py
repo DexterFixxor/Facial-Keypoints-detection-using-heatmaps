@@ -1,20 +1,23 @@
 import cv2
-from tqdm import tqdm
+from tqdm import tqdm, tnrange, trange
+from collections import OrderedDict
 
 import torch.nn
 from torch.utils.data import DataLoader
 from torch.optim import Adam
 from torch.autograd import Variable
+import numpy as np
 
 from src.cpm_model import CPM
 from src.dataset import FaceKeypointsDataset
 import src.utils as utils
-
-import numpy as np
 from config import cfg
 
 import time
 import matplotlib.pyplot as plt
+
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 
 
 def run_epoch(ep, net, optim, data, train=True):
@@ -22,8 +25,7 @@ def run_epoch(ep, net, optim, data, train=True):
     utils.create_folder(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{epoch + 1}/")
 
     loss_list = []
-    print("")
-    print("Training...") if train else print("Validating...")
+    #print("Training...") if train else print("Validating...")
     start = time.time()
     if train:
         model.train()
@@ -31,7 +33,10 @@ def run_epoch(ep, net, optim, data, train=True):
         model.eval()
 
     heatmap_weight = cfg.HEATMAP_WEIGHT
-    for i, sample in tqdm(enumerate(data), total=len(data)):
+
+    position = 1 if train else 2
+    t = tqdm(enumerate(data), total=len(data), position=position, leave=True, desc=f'Epoch [{ep}/{cfg.EPOCH}]\n' + 'Train' if train else 'Valid:')
+    for i, sample in t:
         image, heatmaps = sample['image'], sample['heatmaps']
         x = Variable(image).cuda() if train else image.to(cfg.DEVICE)
         y = Variable(heatmaps).cuda() if train else heatmaps.to(cfg.DEVICE)
@@ -50,6 +55,9 @@ def run_epoch(ep, net, optim, data, train=True):
         optim.step()
 
         loss_list.append(loss.item())
+
+        post_fix = OrderedDict([('Average loss', str(np.mean(loss_list, dtype='float32')))])
+        t.set_postfix(ordered_dict=post_fix, refresh=True)
 
         if (i+1) % 10 == 0 or i == 0:
             fig, axis = plt.subplots(4, 3, figsize=(12, 9))
@@ -79,19 +87,23 @@ def run_epoch(ep, net, optim, data, train=True):
             axis[3, 1].imshow(h6.detach().cpu().numpy()[0, index, :, :])
             axis[3, 1].set_title('Stage 6')
 
-            axis[0, 2].imshow(h6.detach().cpu().numpy()[0, 10, :, :])
-            axis[0, 2].set_title('Key_pt 10')
-            axis[1, 2].imshow(h6.detach().cpu().numpy()[0, 20, :, :])
-            axis[1, 2].set_title('Key_pt 20')
-            axis[2, 2].imshow(h6.detach().cpu().numpy()[0, 30, :, :])
-            axis[2, 2].set_title('Key_pt 30')
-            axis[3, 2].imshow(h6.detach().cpu().numpy()[0, 40, :, :])
-            axis[3, 2].set_title('Key_pt 40')
+            kp1 = 11
+            kp2 = 21
+            kp3 = 31
+            kp4 = 41
+            axis[0, 2].imshow(h6.detach().cpu().numpy()[0, kp1, :, :])
+            axis[0, 2].set_title(f'Key_pt {kp1}')
+            axis[1, 2].imshow(h6.detach().cpu().numpy()[0, kp2, :, :])
+            axis[1, 2].set_title(f'Key_pt {kp2}')
+            axis[2, 2].imshow(h6.detach().cpu().numpy()[0, kp3, :, :])
+            axis[2, 2].set_title(f'Key_pt {kp3}')
+            axis[3, 2].imshow(h6.detach().cpu().numpy()[0, kp4, :, :])
+            axis[3, 2].set_title(f'Key_pt {kp4}')
 
             plt.savefig(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{ep + 1}/iter_{i + 1}_loss_{loss.item():0.4f}.png")
             plt.close(fig)
 
-    print("Error: {:.8f}".format(time.time() - start, np.mean(loss_list)))
+    #print("Error: {:.8f}".format(time.time() - start, np.mean(loss_list)))
 
     mean_epoch_loss = np.mean(loss_list)
     return mean_epoch_loss
@@ -138,8 +150,8 @@ if __name__ == "__main__":
     valid_epoch_loss = []
 
     for epoch in range(cfg.EPOCH):
-        print("-" * 50)
-        print(f"Epoch [{epoch + 1}/{cfg.EPOCH}]")
+        #print("-" * 50)
+        #print(f"Epoch [{epoch + 1}/{cfg.EPOCH}]")
         train_loss = run_epoch(ep=epoch, net=model,
                                optim=optimizer,
                                data=train_loader,
