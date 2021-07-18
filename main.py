@@ -21,11 +21,10 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 
 def run_epoch(ep, net, optim, data, train=True):
-    mode = 'train' if train else 'validation'
+    mode = 'Train' if train else 'Valid'
     utils.create_folder(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{epoch + 1}/")
 
     loss_list = []
-    #print("Training...") if train else print("Validating...")
     start = time.time()
     if train:
         model.train()
@@ -34,8 +33,7 @@ def run_epoch(ep, net, optim, data, train=True):
 
     heatmap_weight = cfg.HEATMAP_WEIGHT
 
-    position = 1 if train else 2
-    t = tqdm(enumerate(data), total=len(data), position=position, leave=True, desc=f'Epoch [{ep}/{cfg.EPOCH}]\n' + 'Train' if train else 'Valid:')
+    t = tqdm(enumerate(data), total=len(data), desc=f'Epoch [{ep}/{cfg.EPOCH}] {mode}')
     for i, sample in t:
         image, heatmaps = sample['image'], sample['heatmaps']
         x = Variable(image).cuda() if train else image.to(cfg.DEVICE)
@@ -103,8 +101,6 @@ def run_epoch(ep, net, optim, data, train=True):
             plt.savefig(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{ep + 1}/iter_{i + 1}_loss_{loss.item():0.4f}.png")
             plt.close(fig)
 
-    #print("Error: {:.8f}".format(time.time() - start, np.mean(loss_list)))
-
     mean_epoch_loss = np.mean(loss_list)
     return mean_epoch_loss
 
@@ -150,8 +146,6 @@ if __name__ == "__main__":
     valid_epoch_loss = []
 
     for epoch in range(cfg.EPOCH):
-        #print("-" * 50)
-        #print(f"Epoch [{epoch + 1}/{cfg.EPOCH}]")
         train_loss = run_epoch(ep=epoch, net=model,
                                optim=optimizer,
                                data=train_loader,
@@ -165,7 +159,7 @@ if __name__ == "__main__":
             valid_epoch_loss.append(valid_loss)
 
             if np.mean(valid_epoch_loss) < min_val_loss:
-                torch.save(model.state_dict(), f"{cfg.OUTPUT_PATH}/cpm_net_ep{epoch+1}.pt")
+                torch.save(model.state_dict(), f"{cfg.OUTPUT_PATH}/models/cpm_net_ep{epoch+1}.pt")
                 min_val_loss = np.mean(valid_epoch_loss)
 
     torch.save(model.state_dict(), f"{cfg.OUTPUT_PATH}/cpm_net.pt")
