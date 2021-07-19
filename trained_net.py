@@ -49,7 +49,7 @@ if __name__ == "__main__":
                                                     portion=cfg.TEST_SPLIT)
 
     img_folder = f"{cfg.DATA_ROOT_PATH}/training"
-    model_load_path = './output/19-07-2021-00-48/models/cpm_net_ep60.pt'
+    model_load_path = './weights/cpm_net_ep60.pt'
 
     model = CPM(n_keypoints=68)
     model.load_state_dict(torch.load(model_load_path))
@@ -63,7 +63,9 @@ if __name__ == "__main__":
         img = cv2.imread(f"{img_folder}/{valid_samples.iloc[i][0]}")
         img, _ = resize(img, None)
         h, w, c = img.shape
-        top, left = (cfg.MAX_IMG_SIZE[0] - h)//cfg.HEATMAP_STRIDE, (cfg.MAX_IMG_SIZE[1] - w)//cfg.HEATMAP_STRIDE
+        print(img.shape)
+        top, left = (cfg.MAX_IMG_SIZE[0] - h), (cfg.MAX_IMG_SIZE[1] - w)
+        top, left = top//2, left//2
         img_padded = np.zeros((cfg.MAX_IMG_SIZE[0], cfg.MAX_IMG_SIZE[1], c), dtype='float32')
         img_padded[top:top + h, left:left + w] = img
         img_padded = img_padded / 255.
