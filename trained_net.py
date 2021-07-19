@@ -16,36 +16,29 @@ def delay_sec(sec):
     while (time.time() - start) < sec:
         pass
 
+
 def get_keypoints(net, in_image):
     _, _, _, _, _, heatmap6 = net(in_image)
     heatmap6 = heatmap6.detach().cpu().numpy()
     kp_list = []
 
-    """fig, axes = plt.subplots(2, 8)
-    for x in range(2):
-        for y in range(8):
-            hm = heatmap6[0, x+y+1, :, :]
-            axes[x, y].imshow(hm)
-
-    fig.tight_layout()"""
     for i in range(68):
         hm = heatmap6[0, i+1, :, :]
-        hm = cv2.resize(hm, (cfg.IMG_SIZE, cfg.IMG_SIZE))
+        #hm = cv2.resize(hm, (cfg.IMG_SIZE, cfg.IMG_SIZE))
 
         _, conf, _, point = cv2.minMaxLoc(hm)
-        x = point[0]
-        y = point[1]
+        x = point[0] * cfg.HEATMAP_STRIDE
+        y = point[1] * cfg.HEATMAP_STRIDE
         kp_list.append((int(x), int(y), conf))
-    plt.show()
+
     return kp_list
 
 
 def draw_keypoints(img, kpts):
 
     for i in range(len(kpts)):
-        if kpts[i][2] > 0.4 and i != 0:
-            print(kpts[i])
-            cv2.circle(img, kpts[i][:2], 5, [255, 0, 0], -1, cv2.LINE_AA)
+        if  i != 0:
+            cv2.circle(img, kpts[i][:2], 1, [255, 0, 0], -1, cv2.LINE_AA)
 
     return img
 
@@ -56,7 +49,7 @@ if __name__ == "__main__":
                                                     portion=cfg.TEST_SPLIT)
 
     img_folder = f"{cfg.DATA_ROOT_PATH}/training"
-    model_load_path = './output/16-07-2021-08-28/cpm_net_ep60.pt'
+    model_load_path = './output/19-07-2021-00-48/models/cpm_net_ep60.pt'
 
     model = CPM(n_keypoints=68)
     model.load_state_dict(torch.load(model_load_path))
@@ -64,14 +57,14 @@ if __name__ == "__main__":
     model.to(cfg.DEVICE)
     model.eval()
 
-    resize = MyTransforms.Resize(max_img_size=240, desired_img_size=128)
+    resize = MyTransforms.Resize(desired_img_size=cfg.IMG_SIZE)
 
     for i in range(len(valid_samples)):
-        img = cv2.imread(f"{img_folder}/{train_samples.iloc[i][0]}")
+        img = cv2.imread(f"{img_folder}/{valid_samples.iloc[i][0]}")
         img, _ = resize(img, None)
         h, w, c = img.shape
-        top, left = (256 - h)//2, (256-w)//2
-        img_padded = np.zeros((256, 256, 3), dtype='float32')
+        top, left = (cfg.MAX_IMG_SIZE[0] - h)//cfg.HEATMAP_STRIDE, (cfg.MAX_IMG_SIZE[1] - w)//cfg.HEATMAP_STRIDE
+        img_padded = np.zeros((cfg.MAX_IMG_SIZE[0], cfg.MAX_IMG_SIZE[1], c), dtype='float32')
         img_padded[top:top + h, left:left + w] = img
         img_padded = img_padded / 255.
 
