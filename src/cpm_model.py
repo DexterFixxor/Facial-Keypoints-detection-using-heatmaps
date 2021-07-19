@@ -54,8 +54,6 @@ class CPM(nn.Module):
                 self.stage2_pool3 = nn.MaxPool2d(kernel_size=2, padding=0, stride=2)
         self.stage2_conv3 = nn.Conv2d(128, 128, (9, 9), (1, 1), (4, 4))
 
-
-
         """ STAGE 2 b) --- classification"""
         self.stage2_conv4 = nn.Conv2d(128, 32, (5, 5), (1, 1), (2, 2))
 
