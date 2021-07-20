@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 import torch.nn
 from torch.utils.data import DataLoader
-from torch.optim import Adam
+from torch.optim import Adam, AdamW
 from torch.autograd import Variable
 import numpy as np
 
@@ -98,7 +98,7 @@ def run_epoch(ep, net, optim, data, train=True):
             axis[3, 2].imshow(h6.detach().cpu().numpy()[0, kp4, :, :])
             axis[3, 2].set_title(f'Key_pt {kp4}')
 
-            plt.savefig(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{ep + 1}/iter_{i + 1}_loss_{loss.item():0.4f}.png")
+            plt.savefig(f"{cfg.OUTPUT_PATH}/heatmap_results/{mode}/epoch_{ep}/iter_{i + 1}_loss_{loss.item():0.4f}.png")
             plt.close(fig)
 
     mean_epoch_loss = np.mean(loss_list)
@@ -135,7 +135,12 @@ if __name__ == "__main__":
     print('-' * 50)
 
     model = CPM(n_keypoints=68).to(cfg.DEVICE) #68 facial keypoints
-    optimizer = Adam(model.parameters(), lr=cfg.LR)
+
+    if cfg.optimizer == 'AdamW':
+        optimizer = AdamW(model.parameters(), lr=cfg.LR)
+    else:
+        optimizer = Adam(model.parameters(), lr=cfg.LR)
+
     criterion = torch.nn.MSELoss()
 
     utils.save_config_params()

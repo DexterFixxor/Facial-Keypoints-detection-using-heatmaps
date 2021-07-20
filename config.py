@@ -18,7 +18,7 @@ class Config():
         # Learning params
         self.NUM_WORKERS = 8
         self.BATCH_SIZE = 16  # possible 32 if stride=8, bcs of more memory in GPU
-        self.LR = 8e-6  # default 0.0001
+        self.LR = 1e-5  # default 0.0001
         self.EPOCH = 60
         self.VALID_EACH = 1
         self.DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -35,6 +35,8 @@ class Config():
         self.SIGMA = 1
         __img_size_1, __img_size_2 = (self.IMG_SIZE, self.IMG_SIZE) if isinstance(self.IMG_SIZE, int) else self.IMG_SIZE
         self.HEATMAP_WEIGHT = 1.0  # (__img_size_1 * __img_size_2 * 68/ 1.0) / (self.HEATMAP_STRIDE ** 2)
+
+        self.optimizer = 'AdamW'
 
 
 cfg = Config()
