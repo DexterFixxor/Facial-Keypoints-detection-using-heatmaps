@@ -146,7 +146,7 @@ if __name__ == "__main__":
     valid_epoch_loss = []
 
     for epoch in range(cfg.EPOCH):
-        train_loss = run_epoch(ep=epoch, net=model,
+        train_loss = run_epoch(ep=epoch+1, net=model,
                                optim=optimizer,
                                data=train_loader,
                                train=True)
@@ -154,7 +154,7 @@ if __name__ == "__main__":
         train_epoch_loss.append(train_loss)
 
         if epoch % cfg.VALID_EACH == 0:
-            valid_loss = run_epoch(ep=epoch, net=model, optim=optimizer, data=valid_loader, train=False)
+            valid_loss = run_epoch(ep=epoch+1, net=model, optim=optimizer, data=valid_loader, train=False)
 
             valid_epoch_loss.append(valid_loss)
 
