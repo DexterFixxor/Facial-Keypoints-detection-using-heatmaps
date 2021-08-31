@@ -8,6 +8,8 @@ Dataset used is [Facial Keypints (68)](https://www.kaggle.com/tarunkr/facial-key
 
 # Training
 
+Requires: PyTorch 1.9.0
+
 1. Download dataset and place it inside project folder.
 2. Inside _config.py_ file change **DATA_ROOT_PATH** to coresponding folder name. For example: "data". Rest of the file leave at default, change _batch size_ and _number of workers_ depending on hardware used.
 3. Run _main.py_ to start training. Model, loss graph and copy of configuration parameters is saved in "output/current_date_and_time" folder in project root. 
@@ -35,3 +37,4 @@ Inside _camera_test.py_ change:
 model_load_path = './weights/cpm_net_ep60.pt' 
 ...
 ```
+
