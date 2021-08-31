@@ -1,4 +1,4 @@
-# Facial keypoints detection using Convolutional Pose Estimation
+# Facial keypoints detection using Convolutional Pose Machines
 
 
 This repository contains code for training neural network using Pytorch framework. Neural network model is based on [Convolutional Pose Machines](https://arxiv.org/abs/1602.00134) paper, but instead of body parts network is trained to recognize facial keypoints and output probability map for each keypoint.
