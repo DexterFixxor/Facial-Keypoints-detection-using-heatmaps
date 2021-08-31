@@ -1,3 +1,9 @@
+"""
+
+This script is only for testing purposes.
+
+"""
+
 import torch
 import cv2
 import numpy as np
